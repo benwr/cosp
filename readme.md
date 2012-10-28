@@ -1,9 +1,32 @@
 # Course of Study Planner #
 
-This is a project I'm working on to replicate the Course of Study Planner
-in use by University Honors at Virginia Tech.
+Warning: This is "readme-driven development." Most of this document
+is wishful thinking!
+
+This is a project I'm working on to replicate the 
+[Course of Study Planner] (http://www.univhonors.vt.edu/html/cosp.html)
+in use by University Honors at Virginia Tech. It's licensed under the 
+MIT license (found in license.txt).
 
 ## Design ##
+
+### Architecture ###
+
+The base functions that are used for adding and removing classes are found
+`src/cosp.scm`. They're extremely simple, and can probably be modified to
+work with any scheme implementation you care to try.
+
+The basic idea is that there is a key-value store somewhere, which spits
+out course information when you send it a course id. Thus, to make this
+work with other schools (with similar course-numbering schemes, such that
+course descriptors match the regex `/^[A-Z]*\s?\d+$/`), one only needs to
+re-implement the key-value store backend.
+
+For the Virginia Tech implementation (the only one I care about, as it is 
+the school I attend), the backend is a server in Chicken Scheme server that 
+trolls the VT historical timetables for information.
+
+### Data Structures ###
 
 Schedules are in s-expression data structures that look like:
 
@@ -34,3 +57,5 @@ A full plan, then, would look like this:
       ("Spring 2013"
         ((ece . 3574) "Applied Software Design" 3 "Designing software for
           the corporate world using C++")))
+
+
