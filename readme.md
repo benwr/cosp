@@ -13,8 +13,16 @@ MIT license (found in license.txt).
 ### Architecture ###
 
 The base functions that are used for adding and removing classes are found
-`src/cosp.scm`. They're extremely simple, and can probably be modified to
-work with any scheme implementation you care to try.
+in `src/cosp.scm`. They're extremely simple, and can probably be modified to
+work with any scheme implementation you care to try:
+
+* `(add-course <course> <semester>)` Adds the course
+  to the specified semester and returns the result.
+* `(rem-course '(<subject> . <id>) <semester>)` Removes  course from the
+  semester and returns the result. Returns nil if the course already exists.
+* `(add-semester <semester-name> <schedule>)` Adds an empty semester to the 
+  schedule.
+
 
 The basic idea is that there is a key-value store somewhere, which spits
 out course information when you send it a course id. Thus, to make this
