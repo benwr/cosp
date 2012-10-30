@@ -18,37 +18,53 @@ require 'nokogiri'
 class Timetable
   def initialize(url="https://banweb.banner.vt.edu/ssb/prod/HZSKVTSC", 
                  sem='201301',
-                 search_format=".P_ProcRequest?history=Y&CAMPUS=0&TERMYEAR=%{term}&CORE_CODE=AR%%25&SUBJ_CODE=%{subject}&SCHDTYPE=%%25&CRSE_NUMBER=%{number}&crn=&open_only=&BTN_PRESSED=FIND+class+sections&inst_name=") #&PRINT_FRIEND=Y")
+                 search_format=".P_ProcRequest?CAMPUS=0&TERMYEAR=%{term}&CORE_CODE=AR%%25&SUBJ_CODE=%{subject}&SCHDTYPE=%%25&CRSE_NUMBER=%{number}&crn=&open_only=&BTN_PRESSED=FIND+class+sections&inst_name=") #&history=Y&PRINT_FRIEND=Y")
     @url = url
     @current_term = sem
     @search_format = search_format
   end
 
-  def get_course(subj, id)  # returns a hash table with subject, id, title, 
-    term = @current_term    # description, example crn, credit count, prereqs, 
+  def course_info(subj, id)  # returns a hash table with subject, id, title, 
+    term = @current_term    # description, credit count, prereqs, 
     results = []            # coreqs
-    while (not (results = search(term, subj, id)))
+    format = @search_format
+    semesters_checked = 0;
+    while (not (results = search(term, subj, id, semesters_checked > 1)))
+      semesters += 1;
       term = previous_semester(term)
     end
     return results
   end
 
-  def search(term, subj, id) # returns a 2d array of the results
+  def search(term, subj, id, historical=false)
+    # Returns an array of hash maps of course info for the given semester
+    #   Includes the keys :subject :number :credits :title :crn :term
+    #   :instructor :days :begin :end :type and :location
     search_string = @search_format % {   :term => term,
-                                      :subject => subj,
+                                      :subject => subj.upcase,
                                        :number => id}
+    search_string = search_string + (historical ? "&history=Y" : '')
     resp = Nokogiri::HTML(open(@url + search_string))
     result = []
-    rows = resp.xpath('//tr')[14..-1]
-    return nil if rows.nil?
+    firstrow = historical ? 14 : 13
+    rows = resp.xpath('//tr')[firstrow..-1]
+    return [] if rows.nil?
     rows.each do |row|
       tds = row.css('td')
       break unless tds.length == 12
-      result.push({:subject => subj,
-                    :number => id,
-                   :credits => tds[4].text.strip.to_i,
-                     :title => tds[2].text.strip,
-                       :crn => tds[0].text.gsub(/\s|(&nbsp)/, '')})
+      result.push({:subject    => subj,
+                   :number     => id,
+                   :credits    => tds[4].text.strip.to_i,
+                   :title      => tds[2].text.strip,
+                   :crn        => tds[0].text.gsub(/\s|(&nbsp)/, ''),
+                   :type       => tds[3].text.strip,
+                   :seats      => tds[5].text,#.split('/'),#.each{|num| num.strip!},
+                   :term       => term,
+                   :instructor => tds[6].text.strip,
+                   :days       => tds[7].text.strip.split,
+                   :begin      => tds[8].text.strip,
+                   :end        => tds[9].text.strip,
+                   :location   => tds[10].text.strip})
     end
 
     return result
