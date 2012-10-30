@@ -14,15 +14,21 @@ class Timetable
   end
 
   def course_info(subj, id)  # returns a hash table with subject, id, title, 
-    term = @current_term    # description, credit count, prereqs, 
-    results = []            # coreqs
+    term = @current_term     # description, credit count 
+    results = []
     format = @search_format
     semesters_checked = 0;
     while (results = search(term, subj, id, semesters_checked > 1)) != []
       semesters_checked += 1;
       term = previous_semester(term)
     end
-    return results
+
+    course = {:subject => subj,
+              :number  => id,
+              :credits => results[0][:credits],
+              :title   => results[0][:title],
+              :type    => results[0][:type]}
+    return results[0]
   end
 
   def search(term, subj, id, historical=false)
