@@ -5,7 +5,7 @@ is wishful thinking!
 
 This is a project I'm working on to replicate the 
 [Course of Study Planner] (http://www.univhonors.vt.edu/html/cosp.html)
-in use by University Honors at Virginia Tech. It's licensed under the 
+in use by University Honors at Virginia Tech. It's made available under the 
 MIT license (found in license.txt).
 
 ## Design ##
