@@ -18,8 +18,8 @@ class Timetable
     results = []            # coreqs
     format = @search_format
     semesters_checked = 0;
-    while (not (results = search(term, subj, id, semesters_checked > 1)))
-      semesters += 1;
+    while (results = search(term, subj, id, semesters_checked > 1)) != []
+      semesters_checked += 1;
       term = previous_semester(term)
     end
     return results
