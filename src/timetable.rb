@@ -7,7 +7,7 @@ require 'nokogiri'
 class Timetable
   def initialize(url="https://banweb.banner.vt.edu/ssb/prod/HZSKVTSC", 
                  sem='201301',
-                 search_format=".P_ProcRequest?CAMPUS=0&TERMYEAR=%{term}&CORE_CODE=AR%%25&SUBJ_CODE=%{subject}&SCHDTYPE=%%25&CRSE_NUMBER=%{number}&crn=&open_only=&BTN_PRESSED=FIND+class+sections&inst_name=") #&history=Y&PRINT_FRIEND=Y")
+                 search_format=".P_ProcRequest?CAMPUS=0&TERMYEAR=%s&CORE_CODE=AR%%25&SUBJ_CODE=%s&SCHDTYPE=%%25&CRSE_NUMBER=%s&crn=&open_only=&BTN_PRESSED=FIND+class+sections&inst_name=") #&history=Y&PRINT_FRIEND=Y")
     @url = url
     @current_term = sem
     @search_format = search_format
@@ -35,9 +35,7 @@ class Timetable
     # Returns an array of hash maps of course info for the given semester
     #   Includes the keys :subject :number :credits :title :crn :term
     #   :instructor :days :begin :end :type and :location
-    search_string = @search_format % {   :term => term,
-                                      :subject => subj.upcase,
-                                       :number => id}
+    search_string = format(@search_format, term, subj.upcase, id)
     search_string = search_string + (historical ? "&history=Y" : '')
     resp = Nokogiri::HTML(open(@url + search_string))
     result = []
