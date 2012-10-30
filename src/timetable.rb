@@ -51,20 +51,26 @@ class Timetable
     return [] if rows.nil?
     rows.each do |row|
       tds = row.css('td')
-      break unless tds.length == 12
-      result.push({:subject    => subj,
-                   :number     => id,
-                   :credits    => tds[4].text.strip.to_i,
-                   :title      => tds[2].text.strip,
-                   :crn        => tds[0].text.gsub(/\s|(&nbsp)/, ''),
-                   :type       => tds[3].text.strip,
-                   :seats      => tds[5].text,#.split('/'),#.each{|num| num.strip!},
-                   :term       => term,
-                   :instructor => tds[6].text.strip,
-                   :days       => tds[7].text.strip.split,
-                   :begin      => tds[8].text.strip,
-                   :end        => tds[9].text.strip,
-                   :location   => tds[10].text.strip})
+      if tds.length == 12
+        result.push({:subject    => subj,
+                     :number     => id,
+                     :credits    => tds[4].text.strip.to_i,
+                     :title      => tds[2].text.strip,
+                     :crn        => tds[0].text.gsub(/\s|(&nbsp)/, ''),
+                     :type       => tds[3].text.strip,
+                     :seats      => tds[5].text,#.split('/'),#.each{|num| num.strip!},
+                     :term       => term,
+                     :instructor => tds[6].text.strip,
+                     :days       => [tds[7].text.strip.split],
+                     :begin      => [tds[8].text.strip],
+                     :end        => [tds[9].text.strip],
+                     :locations  => [tds[10].text.strip]})
+      elsif tds.length == 10
+        result[-1][:days].push(tds[5].text.strip.split)
+        result[-1][:begin].push(tds[6].text.strip)
+        result[-1][:end].push(tds[7].text.strip)
+        result[-1][:locations].push(tds[8].text.strip)
+      end
     end
 
     return result

@@ -31,8 +31,8 @@ course descriptors match the regex `/^[A-Z]*\s?\d+$/`), one only needs to
 re-implement the key-value store backend.
 
 For the Virginia Tech implementation (the only one I care about, as it is 
-the school I attend), the backend is a server in Chicken Scheme server that 
-trolls the VT historical timetables for information.
+the school I attend), the backend is a server in Ruby that trolls the VT 
+timetables for information.
 
 ### Data Structures ###
 
