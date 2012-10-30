@@ -4,17 +4,6 @@ require 'open-uri'
 require 'nokogiri'
 
 
-#    response = Nokogiri::HTML(open(url))
-#    response.xpath("//font[@size=1]").each do |field|
-#      if field.text =~ /^\d+$/
-#        found = true
-#        crn = field.text.to_i
-#      end
-#    end
-    
-#  end
-#end
-
 class Timetable
   def initialize(url="https://banweb.banner.vt.edu/ssb/prod/HZSKVTSC", 
                  sem='201301',
