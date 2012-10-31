@@ -18,9 +18,13 @@ class Timetable
     results = []
     format = @search_format
     semesters_checked = 0;
-    while (results = search(term, subj, id, semesters_checked > 1)) != []
+    while (((results = search(term, subj, id, semesters_checked > 1)) == []) and (semesters_checked < 8))
       semesters_checked += 1;
       term = previous_semester(term)
+    end
+
+    if not results
+      return {}
     end
 
     course = {:subject => subj,
@@ -28,7 +32,7 @@ class Timetable
               :credits => results[0][:credits],
               :title   => results[0][:title],
               :type    => results[0][:type]}
-    return results[0]
+    return course
   end
 
   def search(term, subj, id, historical=false)
