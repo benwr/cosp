@@ -7,7 +7,7 @@ require 'nokogiri'
 class Timetable
   def initialize(url="https://banweb.banner.vt.edu/ssb/prod/HZSKVTSC", 
                  sem='201301',
-                 search_format=".P_ProcRequest?CAMPUS=0&TERMYEAR=%s&CORE_CODE=AR%%25&SUBJ_CODE=%s&SCHDTYPE=%%25&CRSE_NUMBER=%s&crn=&open_only=&BTN_PRESSED=FIND+class+sections&inst_name=") #&history=Y&PRINT_FRIEND=Y")
+                 search_format=".P_ProcRequest?CAMPUS=0&TERMYEAR=%s&CORE_CODE=AR%%25&SUBJ_CODE=%s&SCHDTYPE=%%25&CRSE_NUMBER=%s&crn=&open_only=&BTN_PRESSED=FIND+class+sections&inst_name=&PRINT_FRIEND=Y") #&history=Y&PRINT_FRIEND=Y")
     @url = url
     @current_term = sem
     @search_format = search_format
@@ -43,12 +43,15 @@ class Timetable
     search_string = search_string + (historical ? "&history=Y" : '')
     resp = Nokogiri::HTML(open(@url + search_string))
     result = []
-    firstrow = historical ? 14 : 13
+    firstrow = 1
     rows = resp.xpath('//tr')[firstrow..-1]
     return [] if rows.nil?
     rows.each do |row|
       tds = row.css('td')
       if tds.length == 12
+        course = tds[1].text.strip.split("-")
+        subj = course[0]
+        id = course[1]
         result.push({:subject    => subj,
                      :number     => id,
                      :credits    => tds[4].text.strip.to_i,
