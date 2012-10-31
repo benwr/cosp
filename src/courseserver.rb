@@ -18,7 +18,7 @@ get '/detail/:sem/:subj/:num' do
   JSON::dump(t.search(params[:sem], 
                       params[:subj], 
                       params[:num], 
-                      params[:sem].to_i == CURRENT_SEMESTER.to_i ))
+                      params[:sem] != CURRENT_SEMESTER ))
 end
 
 get '/:subj/:num' do
